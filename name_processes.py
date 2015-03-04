@@ -1,22 +1,33 @@
 import psutil
+import bokeh
 import time
 
-__author__ = 'davidabrahams'
+__author__ = 'davidabrahams & tomheale'
 
 
-def print_processes():
+def get_process_data():
+
     for proc in psutil.process_iter():
-        proc.get_cpu_percent()
+    	proc.get_cpu_percent()
+    process_names = []
+    process_usages = []
 
-    time.sleep(1)
+    time.sleep(0.5)
 
     for proc in psutil.process_iter():
         memory_info, vms = proc.get_memory_info()
-        print str(proc.get_cpu_percent()) + ', ' + str(memory_info) + ', ' + str(proc.name())
+        item = [int(proc.get_cpu_percent()), (int(memory_info))/(1024.0**2)]
+        process_names.append(str(proc.name()))
+        process_usages.append(item)
+    process_data = dict(zip(process_names,process_usages))
+    return process_data
 
+def print_processes():
+    process_data = get_process_data()
+    for key in process_data:
+        print key, process_data[key]
 
-def get_procs():
-    return [proc for proc in psutil.process_iter()]
+# So I got rid of print_processes(). It's in older versions if we need it. I didn't do it deliberately...
 
 
 if __name__ == '__main__':
