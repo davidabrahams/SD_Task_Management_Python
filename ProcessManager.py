@@ -1,3 +1,4 @@
+from collections import OrderedDict
 from pprint import pprint
 import psutil
 import time
@@ -10,7 +11,7 @@ class ProcessManager:
 
     def get_process_data(self):
         """
-        :return: a dict of process_name:(cpu_percent, ram_usage_mb) key value pairs
+        :return: an OrderedDict of process_name:(cpu_percent, ram_usage_mb) key value pairs
         """
         process_names = []
         process_usages = []
@@ -22,13 +23,13 @@ class ProcessManager:
             process_usages.append((proc.get_cpu_percent(), (int(memory_info)) / (1024.0 ** 2)))
 
         # create a dict out of the lists
-        return dict(zip(process_names, process_usages))
+        return OrderedDict(zip(process_names, process_usages))
 
 
 
     def init_process_data(self):
         """
-        :return: a dict of process_name:(cpu_percent, ram_usage_mb) key value pairs
+        :return: an OrderedDict of process_name:(cpu_percent, ram_usage_mb) key value pairs
         """
 
         # Check the initial usage of all processes
@@ -73,7 +74,7 @@ class ProcessManager:
 
 
     def print_process_data(self):
-        pprint(self.data)
+        pprint(dict(self.data))
 
 
 if __name__ == '__main__':
