@@ -5,6 +5,9 @@ import time
 
 class ProcessManager:
 
+    def __init__(self):
+        self.data = self.init_process_data()
+
     def get_process_data(self):
         """
         :return: a dict of process_name:(cpu_percent, ram_usage_mb) key value pairs
@@ -72,9 +75,6 @@ class ProcessManager:
     def print_process_data(self):
         pprint(self.data)
 
-
-    def __init__(self):
-        self.data = self.init_process_data()
 
 if __name__ == '__main__':
     proc_manager = ProcessManager()
