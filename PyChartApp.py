@@ -16,6 +16,8 @@ class PyChartApp:
         plt.clf()
         data = self.proc_manager.data
         keys = data.keys()
+
+        # Only display processes with more than 1.0 CPU
         indices_to_remove = []
         vals = []
         for i, k in enumerate(keys):
@@ -24,9 +26,12 @@ class PyChartApp:
                 indices_to_remove.append(i)
             else:
                 vals.append(cpu)
+        # Iterate backward in order to remove correct indices.
         for i in reversed(indices_to_remove):
             keys.pop(i)
-        print(plt.pie(vals, labels=keys))
+
+        # Make a pie graph
+        plt.pie(vals, labels=keys)
         plt.show()
 
     def update(self):
@@ -35,6 +40,7 @@ class PyChartApp:
 if __name__ == '__main__':
     p = PyChartApp()
     while True:
+        # This doesn't work. Execution hangs at p.plot() because execution hangs at plt.show(), so the plot doesn't update.
         p.update()
         p.plot()
         time.sleep(0.1)
