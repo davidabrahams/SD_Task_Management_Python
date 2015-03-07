@@ -36,7 +36,7 @@ class ProcessManager:
         for proc in psutil.process_iter():
             proc.get_cpu_percent()
 
-        time.sleep(0.5)
+        time.sleep(0.25)
 
         return self.get_process_data()
 
