@@ -5,7 +5,6 @@ import time
 
 
 class ProcessManager:
-
     def __init__(self):
         self.data = self.init_process_data()
 
@@ -24,7 +23,6 @@ class ProcessManager:
 
         # create a dict out of the lists
         return OrderedDict(zip(process_names, process_usages))
-
 
 
     def init_process_data(self):

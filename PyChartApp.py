@@ -6,13 +6,13 @@ from ProcessManager import ProcessManager
 
 __author__ = 'davidabrahams & tomheale'
 
-class PyChartApp:
 
+class PyChartApp:
     def __init__(self):
         self.proc_manager = ProcessManager()
-        plt.show(block = False)
+        plt.show(block=False)
         plt.close()
-        plt.ion()       
+        plt.ion()
 
     def shorten_names(self, names):
         new_names = []
@@ -32,7 +32,7 @@ class PyChartApp:
         indices_to_remove = []
         vals = []
         for i, k in enumerate(keys):
-            cpu, ram =  data[k]
+            cpu, ram = data[k]
             if ram < 20.0:
                 indices_to_remove.append(i)
             else:
