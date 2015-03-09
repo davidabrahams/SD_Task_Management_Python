@@ -12,17 +12,17 @@ class ProcessManager:
         """
         :return: an OrderedDict of process_name:(cpu_percent, ram_usage_mb) key value pairs
         """
-        process_names = []
-        process_usages = []
+        process_pids = []
+        process_info = []
 
         for proc in psutil.process_iter():
             # Iterate through the processes and add the name:(cpu, ram) pairs to lists
             memory_info, vms = proc.get_memory_info()
-            process_names.append(str(proc.name()))
-            process_usages.append((proc.get_cpu_percent(), (int(memory_info)) / (1024.0 ** 2)))
+            process_pids.append(proc.pid)
+            process_info.append((str(proc.name()), proc.get_cpu_percent(), (int(memory_info)) / (1024.0 ** 2)))
 
         # create a dict out of the lists
-        return OrderedDict(zip(process_names, process_usages))
+        return OrderedDict(zip(process_pids, process_info))
 
 
     def init_process_data(self):
@@ -69,6 +69,10 @@ class ProcessManager:
 
         for k, v in zip(keys_to_add, vals_to_add):
             data[k] = v
+
+    def terminate_process(self, pid):
+        p = psutil.Process(pid)
+        p.terminate()
 
 
     def print_process_data(self):

@@ -24,6 +24,9 @@ class PyChartApp:
         return new_names
 
     def update(self):
+
+        tic = time.clock()
+
         self.proc_manager.update()
         data = self.proc_manager.data
         keys = data.keys()
@@ -32,7 +35,7 @@ class PyChartApp:
         indices_to_remove = []
         vals = []
         for i, k in enumerate(keys):
-            cpu, ram = data[k]
+            pid, cpu, ram = data[k]
             if ram < 20.0:
                 indices_to_remove.append(i)
             else:
@@ -41,13 +44,16 @@ class PyChartApp:
         for i in reversed(indices_to_remove):
             keys.pop(i)
 
-        names = self.shorten_names(keys)
+        names = self.shorten_names([data[k][0] for k in keys])
 
         # Make a pie graph
         plt.clf()
         plt.pie(vals, labels=names)
         plt.title('Active Process RAM Usage')
-        plt.pause(0.1)
+
+        toc = time.clock()
+        sleep_time = 0.25
+        plt.pause(max([sleep_time - (toc - tic), 0.0001]))
 
 
 if __name__ == '__main__':
