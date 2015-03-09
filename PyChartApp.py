@@ -14,33 +14,43 @@ class PyChartApp:
         plt.close()
         plt.ion()       
 
+    def shorten_names(self, names):
+        new_names = []
+        for name in names:
+            if ' ' in name:
+                new_names.append(name[0:name.index(' ')])
+            else:
+                new_names.append(name)
+        return new_names
 
     def update(self):
-        while True:
-            self.proc_manager.update()
-            data = self.proc_manager.data
-            keys = data.keys()
+        self.proc_manager.update()
+        data = self.proc_manager.data
+        keys = data.keys()
 
-            # Only display processes with more than 1.0 CPU
-            indices_to_remove = []
-            vals = []
-            for i, k in enumerate(keys):
-                cpu, ram =  data[k]
-                if ram < 20.0:
-                    indices_to_remove.append(i)
-                else:
-                    vals.append(ram)
-            # Iterate backward in order to remove correct indices.
-            for i in reversed(indices_to_remove):
-                keys.pop(i)
+        # Only display processes with more than 20Mb RAM
+        indices_to_remove = []
+        vals = []
+        for i, k in enumerate(keys):
+            cpu, ram =  data[k]
+            if ram < 20.0:
+                indices_to_remove.append(i)
+            else:
+                vals.append(ram)
+        # Iterate backward in order to remove correct indices.
+        for i in reversed(indices_to_remove):
+            keys.pop(i)
 
-            # Make a pie graph
-            plt.clf()
-            plt.pie(vals, labels=keys)
-            plt.pause(0.1)
-            time.sleep(0.05)
+        names = self.shorten_names(keys)
+
+        # Make a pie graph
+        plt.clf()
+        plt.pie(vals, labels=names)
+        plt.title('Active Process RAM Usage')
+        plt.pause(0.1)
 
 
 if __name__ == '__main__':
     p = PyChartApp()
-    p.update()
+    while True:
+        p.update()
