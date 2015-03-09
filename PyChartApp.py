@@ -1,4 +1,3 @@
-from bokeh._glyph_functions import circle
 from matplotlib import pyplot as plt
 import seaborn as sns
 import time
@@ -10,8 +9,7 @@ __author__ = 'davidabrahams & tomheale'
 class PyChartApp:
     def __init__(self):
         self.proc_manager = ProcessManager()
-        plt.show(block=False)
-        plt.close()
+        fig = plt.figure('Active Process RAM Usage')
         plt.ion()
 
     def shorten_names(self, names):
@@ -49,7 +47,7 @@ class PyChartApp:
         # Make a pie graph
         plt.clf()
         plt.pie(vals, labels=names)
-        plt.title('Active Process RAM Usage')
+        plt.axis('equal')
 
         toc = time.clock()
         sleep_time = 0.25
