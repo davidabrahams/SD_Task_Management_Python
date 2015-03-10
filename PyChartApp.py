@@ -9,7 +9,8 @@ __author__ = 'davidabrahams & tomheale'
 
 class PyChartApp:
     def __init__(self):
-        """ Get process data, create figure, and set runtime parameters
+        """
+        Get process data, create figure, and set runtime parameters
         """
         self.proc_manager = ProcessManager()
         self.fig = plt.figure('Active Process RAM Usage')
@@ -20,8 +21,9 @@ class PyChartApp:
         self.sleep_time = 0.5
 
     def shorten_names(self, names):
-        """Cuts string short at first space
-           Used later to remove excess data from labels
+        """
+        Cuts string short at first space
+        Used later to remove excess data from labels
         """
         new_names = []
         for name in names:
@@ -33,7 +35,8 @@ class PyChartApp:
 
 
     def update(self):
-        """Updates process data and displays the app
+        """
+        Updates process data and displays the app
         """
         tic = time.clock()
 
@@ -49,6 +52,7 @@ class PyChartApp:
             if (self.viewing_ram and ram < 20.0) or (not self.viewing_ram and cpu < 2.0):
                 indices_to_remove.append(i)
             else:
+                # Set the pie chart values according to which option is selectied
                 if self.viewing_ram:
                     vals.append(ram)
                 else:
@@ -57,14 +61,16 @@ class PyChartApp:
         for i in reversed(indices_to_remove):
             keys.pop(i)
 
+        # get the process names and put them in a list
         names = self.shorten_names([data[k][0] for k in keys])
 
+        # explode the selected process
         explode_list = [0] * len(keys)
         if self.selected_pid in keys:
             explode_list[keys.index(self.selected_pid)] = 0.2
 
         # Make a pie graph w/buttons
-        plt.clf()   # If we don't clear the figure, the labels overlap
+        plt.clf()  # If we don't clear the figure, the labels overlap
         self.plot_pie(vals, names, explode_list, keys)
         self.make_buttons()
 
@@ -74,7 +80,8 @@ class PyChartApp:
 
 
     def plot_pie(self, vals, names, explode_list, keys):
-        """Generates new pie chart drawing and sets picker
+        """
+        Generates new pie chart drawing and sets picker
         """
         plt.axis('equal')
         wedges, pie_labels = plt.pie(vals, labels=names, explode=explode_list)
@@ -82,7 +89,8 @@ class PyChartApp:
         self.make_picker(self.fig, wedges)
 
     def make_buttons(self):
-        """Creates switch and terminate buttons and sets click function
+        """
+        Creates switch and terminate buttons and sets click function
         """
         # Make Terminate button
         term_button_ax = plt.axes([0.52, 0.01, 0.2, 0.07])
@@ -100,13 +108,15 @@ class PyChartApp:
         switch_button_ax._button = button_switch
 
     def run(self):
-        """Runs app until self.running is set to False
+        """
+        Runs app until self.running is set to False
         """
         while self.running:
             self.update()
 
     def make_picker(self, fig, wedges):
-        """Event manager for wedge selection
+        """
+        Event manager for wedge selection
         """
 
         def onclick(event):
@@ -114,24 +124,28 @@ class PyChartApp:
             pid = self.wedge_dict[wedge]
             self.selected_pid = pid
 
-        def handle_close(evt):
-            self.running = False            
+        # stop running the loop when the user closes the window
+        def handle_close(event):
+            self.running = False
 
         # Make wedges selectable
         for wedge in wedges:
             wedge.set_picker(True)
 
+        # add click and close events
         fig.canvas.mpl_connect('pick_event', onclick)
         fig.canvas.mpl_connect('close_event', handle_close)
 
 
     def terminate(self, event):
-        """Murders the chosen process using its process ID
+        """
+        Murders the chosen process using its process ID
         """
         self.proc_manager.terminate_process(self.selected_pid)
 
     def switch(self, event):
-        """Swaps from viewing RAM to viewing CPU
+        """
+        Swaps from viewing RAM to viewing CPU
         """
         self.viewing_ram = not self.viewing_ram
 
