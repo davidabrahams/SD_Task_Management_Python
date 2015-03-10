@@ -9,16 +9,20 @@ __author__ = 'davidabrahams & tomheale'
 
 class PyChartApp:
     def __init__(self):
+        """ Get process data, create figure, and set runtime parameters
+        """
         self.proc_manager = ProcessManager()
         self.fig = plt.figure('Active Process RAM Usage')
         self.ax = self.fig.add_subplot(111)
         self.selected_pid = None
         self.viewing_ram = True
         self.running = True
-        self.sleep_time = 1.0
-
+        self.sleep_time = 0.5
 
     def shorten_names(self, names):
+        """Cuts string short at first space
+           Used later to remove excess data from labels
+        """
         new_names = []
         for name in names:
             if ' ' in name:
@@ -27,21 +31,22 @@ class PyChartApp:
                 new_names.append(name)
         return new_names
 
+
     def update(self):
-
-
+        """Updates process data and displays the app
+        """
         tic = time.clock()
 
         self.proc_manager.update()
         data = self.proc_manager.data
         keys = data.keys()
 
-        # Only display processes with more than 20Mb RAM
+        # Only display processes with more than 20Mb RAM or 2% CPU usage
         indices_to_remove = []
         vals = []
         for i, k in enumerate(keys):
             pid, cpu, ram = data[k]
-            if (self.viewing_ram and ram < 20.0) or (not self.viewing_ram and cpu < 1.0):
+            if (self.viewing_ram and ram < 20.0) or (not self.viewing_ram and cpu < 2.0):
                 indices_to_remove.append(i)
             else:
                 if self.viewing_ram:
@@ -58,42 +63,59 @@ class PyChartApp:
         if self.selected_pid in keys:
             explode_list[keys.index(self.selected_pid)] = 0.2
 
-        # Make a pie graph
-        plt.clf()
+        # Make a pie graph w/buttons
+        plt.clf()   # If we don't clear the figure, the labels overlap
+        self.plot_pie(vals, names, explode_list, keys)
+        self.make_buttons()
+
+        # Maintains update rate and redraws pie plot
+        toc = time.clock()
+        plt.pause(max([self.sleep_time - (toc - tic), 0.0001]))
+
+
+    def plot_pie(self, vals, names, explode_list, keys):
+        """Generates new pie chart drawing and sets picker
+        """
+        plt.axis('equal')
         wedges, pie_labels = plt.pie(vals, labels=names, explode=explode_list)
         self.wedge_dict = dict(zip(wedges, keys))
         self.make_picker(self.fig, wedges)
 
-        # Make a button
+    def make_buttons(self):
+        """Creates switch, close, and terminate buttons and sets click function
+        """
+        # Make Terminate button
         term_button_ax = plt.axes([0.52, 0.01, 0.2, 0.07])
-        button = Button(term_button_ax, 'Terminate')
-        button.on_clicked(self.terminate)
+        button_term = Button(term_button_ax, 'Terminate')
+        button_term.on_clicked(self.terminate)
+        term_button_ax._button = button_term
 
-        #Make another button
+        # Make Switch button
         switch_button_ax = plt.axes([0.28, 0.01, 0.2, 0.07])
         if not self.viewing_ram:
             button_switch = Button(switch_button_ax, 'Switch to RAM')
         else:
             button_switch = Button(switch_button_ax, 'Switch to CPU')
         button_switch.on_clicked(self.switch)
+        switch_button_ax._button = button_switch
 
+        # Makes Close button
         close_button_ax = plt.axes([0.79, 0.92, 0.2, 0.07])
         button_close = Button(close_button_ax, 'Close')
         button_close.on_clicked(self.finish)
-
-        self.ax.axis('equal')
-
-        toc = time.clock()
-        plt.pause(max([self.sleep_time - (toc - tic), 0.0001]))
-
+        close_button_ax._button = button_close
 
     def run(self):
+        """Runs app until self.running is set to False
+        """
         while self.running:
             self.update()
 
 
 
     def make_picker(self, fig, wedges):
+        """Event manager for wedge selection
+        """
 
         def onclick(event):
             wedge = event.artist
@@ -107,12 +129,18 @@ class PyChartApp:
         fig.canvas.mpl_connect('pick_event', onclick)
 
     def terminate(self, event):
+        """Murders the chosen process using its process ID
+        """
         self.proc_manager.terminate_process(self.selected_pid)
 
     def switch(self, event):
+        """Swaps from viewing RAM to viewing CPU
+        """
         self.viewing_ram = not self.viewing_ram
 
     def finish(self, event):
+        """Indicates that the app should close
+        """
         self.running = False
 
 
