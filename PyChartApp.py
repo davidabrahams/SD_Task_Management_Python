@@ -14,6 +14,8 @@ class PyChartApp:
         self.ax = self.fig.add_subplot(111)
         self.selected_pid = None
         self.viewing_ram = True
+        self.running = True
+        self.sleep_time = 1.0
 
 
     def shorten_names(self, names):
@@ -26,6 +28,7 @@ class PyChartApp:
         return new_names
 
     def update(self):
+
 
         tic = time.clock()
 
@@ -74,11 +77,21 @@ class PyChartApp:
             button_switch = Button(switch_button_ax, 'Switch to CPU')
         button_switch.on_clicked(self.switch)
 
+        close_button_ax = plt.axes([0.79, 0.92, 0.2, 0.07])
+        button_close = Button(close_button_ax, 'Close')
+        button_close.on_clicked(self.finish)
+
         self.ax.axis('equal')
 
         toc = time.clock()
-        sleep_time = 1
-        plt.pause(max([sleep_time - (toc - tic), 0.0001]))
+        plt.pause(max([self.sleep_time - (toc - tic), 0.0001]))
+
+
+    def run(self):
+        while self.running:
+            self.update()
+
+
 
     def make_picker(self, fig, wedges):
 
@@ -99,8 +112,10 @@ class PyChartApp:
     def switch(self, event):
         self.viewing_ram = not self.viewing_ram
 
+    def finish(self, event):
+        self.running = False
+
 
 if __name__ == '__main__':
     p = PyChartApp()
-    while True:
-        p.update()
+    p.run()
