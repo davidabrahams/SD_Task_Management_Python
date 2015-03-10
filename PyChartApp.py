@@ -82,7 +82,7 @@ class PyChartApp:
         self.make_picker(self.fig, wedges)
 
     def make_buttons(self):
-        """Creates switch, close, and terminate buttons and sets click function
+        """Creates switch and terminate buttons and sets click function
         """
         # Make Terminate button
         term_button_ax = plt.axes([0.52, 0.01, 0.2, 0.07])
@@ -99,19 +99,11 @@ class PyChartApp:
         button_switch.on_clicked(self.switch)
         switch_button_ax._button = button_switch
 
-        # Makes Close button
-        close_button_ax = plt.axes([0.79, 0.92, 0.2, 0.07])
-        button_close = Button(close_button_ax, 'Close')
-        button_close.on_clicked(self.finish)
-        close_button_ax._button = button_close
-
     def run(self):
         """Runs app until self.running is set to False
         """
         while self.running:
             self.update()
-
-
 
     def make_picker(self, fig, wedges):
         """Event manager for wedge selection
@@ -122,11 +114,16 @@ class PyChartApp:
             pid = self.wedge_dict[wedge]
             self.selected_pid = pid
 
+        def handle_close(evt):
+            self.running = False            
+
         # Make wedges selectable
         for wedge in wedges:
             wedge.set_picker(True)
 
         fig.canvas.mpl_connect('pick_event', onclick)
+        fig.canvas.mpl_connect('close_event', handle_close)
+
 
     def terminate(self, event):
         """Murders the chosen process using its process ID
@@ -137,11 +134,6 @@ class PyChartApp:
         """Swaps from viewing RAM to viewing CPU
         """
         self.viewing_ram = not self.viewing_ram
-
-    def finish(self, event):
-        """Indicates that the app should close
-        """
-        self.running = False
 
 
 if __name__ == '__main__':
