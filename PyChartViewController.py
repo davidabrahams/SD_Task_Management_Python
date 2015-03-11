@@ -2,17 +2,17 @@ from matplotlib import pyplot as plt
 from matplotlib.widgets import Button
 import seaborn as sns
 import time
-from ProcessManager import ProcessManager
+from ProcessManagerModel import ProcessManagerModel
 
 __author__ = 'davidabrahams & tomheale'
 
 
-class PyChartApp:
+class PyChartAppViewController:
     def __init__(self):
         """
         Get process data, create figure, and set runtime parameters
         """
-        self.proc_manager = ProcessManager()
+        self.proc_manager = ProcessManagerModel()
         self.fig = plt.figure('Active Process RAM Usage')
         self.ax = self.fig.add_subplot(111)
         self.selected_pid = None
@@ -151,5 +151,5 @@ class PyChartApp:
 
 
 if __name__ == '__main__':
-    p = PyChartApp()
+    p = PyChartAppViewController()
     p.run()

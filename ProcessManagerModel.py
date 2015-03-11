@@ -4,13 +4,13 @@ import psutil
 import time
 
 
-class ProcessManager:
+class ProcessManagerModel:
     def __init__(self):
         self.data = self.init_process_data()
 
     def get_process_data(self):
         """
-        :return: an OrderedDict of process_name:(cpu_percent, ram_usage_mb) key value pairs
+        :return: an OrderedDict of pid:(process_name, cpu_percent, ram_usage_mb) key value pairs
         """
         process_pids = []
         process_info = []
@@ -80,7 +80,7 @@ class ProcessManager:
 
 
 if __name__ == '__main__':
-    proc_manager = ProcessManager()
+    proc_manager = ProcessManagerModel()
     for i in range(100):
         proc_manager.update()
         proc_manager.print_process_data()
