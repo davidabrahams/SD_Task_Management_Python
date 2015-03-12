@@ -2,7 +2,7 @@
 
 Steps for running task manager:
 
-1. Download ProcessManager.py and PyChartViewController.py to your desired directory
+1. Download ProcessManagerModel.py and PyChartViewController.py to your desired directory
 
 2. Open terminal and set your working directory to be the same as where you saved the python files
 
